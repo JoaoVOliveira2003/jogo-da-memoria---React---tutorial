@@ -1,31 +1,26 @@
-//importando o valor RegularButton
+// Importando o componente RegularButton.
 import RegularButton from './RegularButton';
 
 /*
-Basicamente é o seguinte 
+Basicamente é o seguinte:
 
 export default function Form({ handleSubmit }) {
 
-tem um handleSubmit significa que ele vai colocar um valor de variavel nisspo
+Se há um handleSubmit, significa que ele vai receber uma função como valor.
 
-ai em baixo vc tem coisas normais de htl
-
-Isso em html normal seria isso:
+O HTML gerado seria equivalente a:
 
 <form class="wrapper" onsubmit="handleSubmit()">
-  <button onclick="handleSubmit()">Start Game</button>
+  <button onclick="handleSubmit()">Começar</button>
 </form>
 */
 
 export default function Form({ handleSubmit }) {
-  return (
-
-    <form className="wrapper" onSubmit={handleSubmit}>
-      <RegularButton handleClick={handleSubmit}>
-      Começar
-      </RegularButton>
-    </form>
-
-  );
+    return (
+        <form className="wrapper" onSubmit={handleSubmit}>
+            <RegularButton handleClick={handleSubmit}>
+                Começar
+            </RegularButton>
+        </form>
+    );
 }
-
