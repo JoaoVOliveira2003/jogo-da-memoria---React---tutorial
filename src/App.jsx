@@ -5,27 +5,10 @@ import MemoryCard from './components/MemoryCard';
 export default function App(){  
     // Controla se o jogo está ativo ou inativo, inicialmente definido como falso.
     const [isGameOn, setIsGameOn] = useState(false);
+    const [emojiData,setEmojiData] = useState([])
+   
 
-    /**
-     * Challenge 01:
-     * Transforme a função startGame em uma função assíncrona (async).
-     * Use try...catch para lidar com erros e faça uma requisição fetch para a API de emojis:
-     * URL: "https://emojihub.yurace.pro/api/all/category/animals-and-nature".
-     * 
-     * - Armazene a resposta em uma constante chamada response.
-     * - Verifique se a resposta está "ok".
-     * 
-     * a) Se sim:
-     *    - Armazene os dados da resposta na constante data.
-     *    - Exiba os dados no console.
-     *    - Chame a função setIsGameOn(true).
-     * 
-     * b) Se não:
-     *    - Lance um erro com uma mensagem personalizada.
-     *    - Dentro do bloco catch, exiba a mensagem de erro no console.
-     * 
-     * ⚠️ Nota: Os emojis renderizados ainda serão aqueles hardcoded no array existente.
-     */
+    console.log(emojiData);
 
     // Função chamada quando o formulário é enviado.
     async function startGame(e) {
@@ -43,10 +26,12 @@ export default function App(){
 
             // Converte a resposta em JSON.
             const data = await response.json();
+            const dataSample = data.slice(0,5);
 
             // Exibe os dados no console para depuração.
             console.log(data);
 
+            setEmojiData(dataSample)
             // Atualiza o estado para ativar o jogo.
             setIsGameOn(true);
         } catch (error) {
@@ -69,7 +54,7 @@ export default function App(){
             {!isGameOn && <Form handleSubmit={startGame} />}  
 
             {/* Renderiza as cartas de memória se o jogo foi iniciado. */}
-            {isGameOn && <MemoryCard handleClick={turnCard} />}  
+            {isGameOn && <MemoryCard handleClick={turnCard} data={emojiData}/>}  
         </main>
     );
 }
