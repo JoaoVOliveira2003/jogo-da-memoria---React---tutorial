@@ -1,60 +1,77 @@
-import { useState } from "react";  
-import Form from './components/Form';  
-import MemoryCard from './components/MemoryCard';
+import { useState } from "react";
+import Form from "./components/Form";
+import MemoryCard from "./components/MemoryCard";
 
-export default function App(){  
-    // Controla se o jogo está ativo ou inativo, inicialmente definido como falso.
-    const [isGameOn, setIsGameOn] = useState(false);
-    const [emojiData,setEmojiData] = useState([])
-   
+export default function App() {
+  const [isGameOn, setIsGameOn] = useState(false);
+  const [emojisData, setEmojisData] = useState([]);
 
-    console.log(emojiData);
+  async function startGame(e) {
+    e.preventDefault();
 
-    // Função chamada quando o formulário é enviado.
-    async function startGame(e) {
-        // Impede o comportamento padrão do formulário (como recarregar a página).
-        e.preventDefault();
+    try {
+      const response = await fetch(
+        "https://emojihub.yurace.pro/api/all/category/animals-and-nature"
+      );
 
-        try {
-            // Faz a requisição para a API de emojis.
-            const response = await fetch("https://emojihub.yurace.pro/api/all/category/animals-and-nature");
+      if (!response.ok) {
+        throw new Error("Erro ao buscar emojis. Tente novamente mais tarde.");
+      }
 
-            // Verifica se a resposta da API foi bem-sucedida.
-            if (!response.ok) {
-                throw new Error('Erro ao buscar emojis. Tente novamente mais tarde.');
-            }
+      const data = await response.json();
+      const dataSlice = getDataSlice(data);
+      const emojisArray = getEmojiArray(dataSlice); // Nome da função corrigido.
 
-            // Converte a resposta em JSON.
-            const data = await response.json();
-            const dataSample = data.slice(0,5);
+      setEmojisData(emojisArray);
+      setIsGameOn(true);
+    } catch (err) {
+      console.error("Ocorreu um erro ao buscar os emojis:", err);
+    }
+  }
 
-            // Exibe os dados no console para depuração.
-            console.log(data);
+  function getRandomIndices(data) {
+    const randomIndicesArray = [];
 
-            setEmojiData(dataSample)
-            // Atualiza o estado para ativar o jogo.
-            setIsGameOn(true);
-        } catch (error) {
-            // Exibe uma mensagem de erro no console se algo der errado.
-            console.error("Ocorreu um erro:", error.message);
-        }
+    for (let i = 0; i < 5; i++) {
+      const randomNum = Math.floor(Math.random() * data.length);
+      if (!randomIndicesArray.includes(randomNum)) {
+        randomIndicesArray.push(randomNum);
+      } else {
+        i--;
+      }
     }
 
-    // Função chamada ao clicar em uma carta.
-    function turnCard() {
-        // Exibe uma mensagem no console para indicar que uma carta foi clicada.
-        console.log('Carta clicada');
+    return randomIndicesArray;
+  }
+
+  function getDataSlice(data) {
+    const randomIndices = getRandomIndices(data);
+    const dataSlice = randomIndices.map((index) => data[index]);
+
+    return dataSlice;
+  }
+
+  function turnCard(name, index) {
+    console.log("Uma carta foi clicada! "+ name + index);
+  }
+
+  function getEmojiArray(data) {
+    const pairedEmojisArray = [...data, ...data];
+
+    for (let i = pairedEmojisArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = pairedEmojisArray[i];
+      pairedEmojisArray[i] = pairedEmojisArray[j];
+      pairedEmojisArray[j] = temp;
     }
+    return pairedEmojisArray;
+  }
 
-    return (
-        <main>  
-            <h1>Memória</h1>  
-
-            {/* Renderiza o formulário se o jogo ainda não foi iniciado. */}
-            {!isGameOn && <Form handleSubmit={startGame} />}  
-
-            {/* Renderiza as cartas de memória se o jogo foi iniciado. */}
-            {isGameOn && <MemoryCard handleClick={turnCard} data={emojiData}/>}  
-        </main>
-    );
+  return (
+    <main>
+      <h1>Memória</h1>
+      {!isGameOn && <Form handleSubmit={startGame} />}
+      {isGameOn && <MemoryCard handleClick={turnCard} data={emojisData} />}
+    </main>
+  );
 }
