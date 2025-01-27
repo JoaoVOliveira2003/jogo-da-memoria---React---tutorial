@@ -95,12 +95,18 @@ export default function App() {
           setSelectedCards([{ name, index }])
       }
   }
-  
+   
   return (
       <main>
-          <h1>Memory</h1>
+          <h1>Jogo da memoria</h1>
           {!isGameOn && <Form handleSubmit={startGame} />}
-          {isGameOn && <MemoryCard handleClick={turnCard} data={emojisData} />}
+          {isGameOn &&
+          <MemoryCard 
+            handleClick={turnCard}
+            data={emojisData}
+            selectedCards={selectedCards}
+            matchedCards ={matchedCards}
+          />}
       </main>
   )
 }
