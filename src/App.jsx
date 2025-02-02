@@ -18,9 +18,13 @@ export default function App() {
     
     useEffect(() => {
         if (emojisData.length && matchedCards.length === emojisData.length) {
-            setIsGameOver(true)
+            setIsGameOver(true);
+            alert("Jogo concluído!");
+            window.location.reload(); // Recarrega a página
+
         }
-    }, [matchedCards])
+    }, [matchedCards]);
+    
     
     async function startGame(e) {
         e.preventDefault()
